@@ -1,4 +1,292 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Arena Insana</title><link rel="stylesheet" href="/style.css"></head><body>
-<div class="wrap"><header><div class="mark">⚔</div><div><small>COMBATE FANTÁSTICO MULTIJUGADOR</small><h1>ARENA <b>INSANA</b></h1></div><span class="live">● EN LÍNEA</span></header>
-<section id="lobby" class="panel"><p class="gold">ELIGE TU LEYENDA</p><h2>Entra en la arena</h2><label>Nombre<input id="name" maxlength="16" value="Jugador"></label><p class="gold">PERSONAJES</p><div id="chars" class="cards"></div><p class="gold">MAPAS</p><div id="maps" class="cards maps"></div><div class="actions"><button id="create" class="primary">CREAR SALA PRIVADA</button><div class="join"><input id="code" placeholder="CÓDIGO"><button id="join">UNIRSE</button></div></div><p id="msg"></p></section>
-<section id="game" class="panel hidden"><div class="bar"><span>SALA <b id="room">----</b></span><span id="count">1/10</span><button id="copy">COPIAR CÓDIGO</button><button id="exit">SALIR</button></div><canvas id="field" width="800" height="500"></canvas><div class="bar"><label>MAPA <select id="mapPick"><option value="bosque">Bosque antiguo</option><option value="volcan">Volcán rojo</option><option value="hielo">Reino de hielo</option><option value="ruinas">Ruinas místicas</option><option value="desierto">Desierto dorado</option><option value="castillo">Castillo oscuro</option></select></label><span>WASD / flechas: mover · Espacio: atacar · E: habilidad</span></div><div class="touch"><div class="pad"><button data-dir="up">▲</button><div><button data-dir="left">◀</button><button data-dir="down">▼</button><button data-dir="right">▶</button></div></div><button id="hit">ATACAR</button><button id="skill">HABILIDAD</button></div><p id="roster"></p></section><footer>CREA TU EQUIPO · DOMINA CADA MAPA</footer></div><script src="/socket.io/socket.io.js"></script><script src="/game.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARENA INSANA</title>
+<script src="/socket.io/socket.io.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10101c;color:white;font-family:Arial,sans-serif}
+header{text-align:center;padding:22px;background:#19192c;border-bottom:3px solid #8c45ff}
+h1{font-size:clamp(30px,6vw,55px);margin:0;color:#d7a7ff;text-shadow:0 0 18px #8c45ff}
+.subtitle{color:#aaa;margin-top:7px}
+.panel{max-width:950px;margin:22px auto;padding:20px;background:#202039;border:1px solid #49446b;border-radius:16px}
+h2{color:#d7a7ff;margin-top:0}
+label{display:block;margin:12px 0 6px;color:#c9c4e7}
+select,input,button{padding:12px;border-radius:9px;border:1px solid #625b88;background:#151528;color:white;font-size:15px}
+select,input{width:100%}
+button{cursor:pointer;background:#7139c9;border:0;font-weight:bold}
+button:hover{background:#9658ef}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+#gameArea{display:none}
+#topbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#arena{display:block;width:100%;height:auto;border:3px solid #8d65d6;border-radius:12px;background:#222}
+#players{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.playerTag{background:#30304e;padding:8px 12px;border-radius:8px;font-size:13px}
+#message{min-height:22px;color:#ffd479;margin-top:12px}
+.controls{display:flex;justify-content:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.controls button{min-width:65px;font-size:20px}
+.small{font-size:13px;color:#aaa}
+@media(max-width:600px){.panel{margin:12px;padding:14px}.actions{grid-template-columns:1fr}#topbar{font-size:13px}}
+</style>
+</head>
+<body>
+<header>
+<h1>ARENA INSANA</h1>
+<div class="subtitle">ELIGE TU PERSONAJE. ENTRA A LA ARENA. ¡DEMUESTRA TU PODER!</div>
+</header>
+
+<section class="panel" id="menu">
+<h2>PREPARA TU PARTIDA</h2>
+
+<label>Tu personaje</label>
+<select id="character">
+<option>Guerrero</option>
+<option>Mago</option>
+<option>Arquera</option>
+<option>Guardian</option>
+<option>Sombra</option>
+<option>Druida</option>
+</select>
+
+<label>Mapa de la partida</label>
+<select id="map">
+<option>Bosque</option>
+<option>Volcan</option>
+<option>Hielo</option>
+<option>Ruinas</option>
+<option>Desierto</option>
+<option>Castillo</option>
+</select>
+
+<div class="actions">
+<button id="create">CREAR SALA</button>
+<div>
+<input id="roomCode" placeholder="CÓDIGO DE SALA">
+<button id="join" style="width:100%;margin-top:8px">UNIRSE A SALA</button>
+</div>
+</div>
+<div id="message"></div>
+<p class="small">Hasta 10 jugadores por sala. Comparte el código con tus amigos.</p>
+</section>
+
+<section class="panel" id="gameArea">
+<div id="topbar">
+<strong id="roomLabel">Sala: ----</strong>
+<strong id="playerLabel">Jugadores: 1/10</strong>
+</div>
+<canvas id="arena" width="900" height="540"></canvas>
+<div class="controls">
+<button id="up">▲</button>
+<button id="left">◀</button>
+<button id="down">▼</button>
+<button id="right">▶</button>
+<button id="attack">⚡ ATACAR</button>
+</div>
+<p class="small">PC: usa WASD o las flechas para moverte. Espacio para atacar. En celular, usa los controles.</p>
+<div id="players"></div>
+<button id="leave" style="margin-top:15px;background:#a93245">SALIR DE LA PARTIDA</button>
+</section>
+
+<script>
+const socket = io();
+const menu = document.getElementById("menu");
+const gameArea = document.getElementById("gameArea");
+const message = document.getElementById("message");
+const canvas = document.getElementById("arena");
+const ctx = canvas.getContext("2d");
+
+let myId = null;
+let roomCode = null;
+let players = [];
+let currentMap = "Bosque";
+let x = 450, y = 270;
+let keys = {};
+let moveTimer = null;
+
+const mapColors = {
+ Bosque:["#163b2b","#285d3d","#6eaa55"],
+ Volcan:["#351719","#782b1e","#ff7938"],
+ Hielo:["#17354c","#34718e","#b5e9ff"],
+ Ruinas:["#34302c","#655447","#b4a17d"],
+ Desierto:["#72502b","#b88642","#edcf80"],
+ Castillo:["#25203e","#4b3c70","#b9a1ef"]
+};
+
+function showError(text){
+ message.textContent = text;
+}
+
+document.getElementById("create").onclick = () => {
+ socket.emit("createRoom", {
+   character: document.getElementById("character").value,
+   map: document.getElementById("map").value
+ });
+};
+
+document.getElementById("join").onclick = () => {
+ const code = document.getElementById("roomCode").value.trim();
+ if (!code) return showError("Escribe el código de una sala.");
+ socket.emit("joinRoom", {
+   code,
+   character: document.getElementById("character").value
+ });
+};
+
+socket.on("errorMessage", showError);
+
+socket.on("joined", data => {
+ myId = data.id;
+ roomCode = data.code;
+ menu.style.display = "none";
+ gameArea.style.display = "block";
+ document.getElementById("roomLabel").textContent = "SALA: " + roomCode;
+ showError("");
+});
+
+socket.on("state", data => {
+ players = data.players;
+ currentMap = data.map;
+ document.getElementById("playerLabel").textContent =
+   "Jugadores: " + players.length + "/10";
+ draw();
+ updatePlayerList();
+});
+
+function updatePlayerList(){
+ const list = document.getElementById("players");
+ list.innerHTML = "";
+ players.forEach(p => {
+   const tag = document.createElement("div");
+   tag.className = "playerTag";
+   tag.textContent = p.character + " | ❤️ " + p.hp + " | ⭐ " + p.score +
+     (p.id === myId ? " (TÚ)" : "");
+   list.appendChild(tag);
+ });
+}
+
+function draw(){
+ const colors = mapColors[currentMap] || mapColors.Bosque;
+ ctx.fillStyle = colors[0];
+ ctx.fillRect(0,0,900,540);
+
+ // Decoración del mapa
+ for(let i=0;i<45;i++){
+   const px = (i*173+43)%900;
+   const py = (i*97+31)%540;
+   ctx.fillStyle = colors[1];
+   ctx.globalAlpha = .65;
+   ctx.beginPath();
+   ctx.arc(px,py,12+(i%4)*5,0,Math.PI*2);
+   ctx.fill();
+ }
+ ctx.globalAlpha = 1;
+
+ ctx.strokeStyle = colors[2];
+ ctx.lineWidth = 5;
+ ctx.strokeRect(10,10,880,520);
+
+ ctx.fillStyle = "white";
+ ctx.font = "bold 20px Arial";
+ ctx.fillText(currentMap.toUpperCase(),25,38);
+
+ players.forEach(p => {
+   ctx.fillStyle = "rgba(0,0,0,.35)";
+   ctx.beginPath();
+   ctx.ellipse(p.x,p.y+17,19,8,0,0,Math.PI*2);
+   ctx.fill();
+
+   ctx.fillStyle = p.color;
+   ctx.fillRect(p.x-13,p.y-17,26,34);
+
+   ctx.fillStyle = "#fff";
+   ctx.fillRect(p.x-8,p.y-11,5,5);
+   ctx.fillRect(p.x+3,p.y-11,5,5);
+
+   ctx.fillStyle = "#222";
+   ctx.fillRect(p.x-19,p.y-30,38,5);
+   ctx.fillStyle = "#35e66b";
+   ctx.fillRect(p.x-19,p.y-30,38*(p.hp/100),5);
+
+   if(p.attacking){
+     ctx.strokeStyle = "#ffe45e";
+     ctx.lineWidth = 5;
+     ctx.beginPath();
+     ctx.arc(p.x,p.y,43,0,Math.PI*2);
+     ctx.stroke();
+   }
+
+   ctx.fillStyle = "white";
+   ctx.font = "12px Arial";
+   ctx.textAlign = "center";
+   ctx.fillText(p.character,p.x,p.y+34);
+   if(p.id === myId){
+     ctx.fillStyle = "#ffe45e";
+     ctx.fillText("TÚ",p.x,p.y+48);
+   }
+ });
+ ctx.textAlign = "left";
+}
+
+function move(dx,dy){
+ if(!myId) return;
+ x = Math.max(25,Math.min(875,x+dx));
+ y = Math.max(25,Math.min(515,y+dy));
+ socket.emit("move",{x,y});
+}
+
+function attack(){
+ if(myId) socket.emit("attack");
+}
+
+document.addEventListener("keydown", e => {
+ const k = e.key.toLowerCase();
+ if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k)) e.preventDefault();
+ keys[k] = true;
+ if(k === " ") attack();
+});
+document.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+setInterval(() => {
+ if(!myId) return;
+ let dx=0,dy=0;
+ if(keys["w"]||keys["arrowup"]) dy-=5;
+ if(keys["s"]||keys["arrowdown"]) dy+=5;
+ if(keys["a"]||keys["arrowleft"]) dx-=5;
+ if(keys["d"]||keys["arrowright"]) dx+=5;
+ if(dx||dy) move(dx,dy);
+},50);
+
+function holdButton(id,dx,dy){
+ const b=document.getElementById(id);
+ let timer=null;
+ const start=e=>{
+   e.preventDefault();
+   if(timer) return;
+   move(dx,dy);
+   timer=setInterval(()=>move(dx,dy),55);
+ };
+ const stop=()=>{
+   clearInterval(timer);
+   timer=null;
+ };
+ b.addEventListener("pointerdown",start);
+ b.addEventListener("pointerup",stop);
+ b.addEventListener("pointerleave",stop);
+ b.addEventListener("pointercancel",stop);
+}
+holdButton("up",0,-5);
+holdButton("down",0,5);
+holdButton("left",-5,0);
+holdButton("right",5,0);
+
+document.getElementById("attack").onclick=attack;
+
+document.getElementById("leave").onclick=()=>{
+ location.reload();
+};
+
+</script>
+</body>
+</html>
