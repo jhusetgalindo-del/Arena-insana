@@ -14,7 +14,9 @@ const rooms = new Map();
 const COLORS = ["#f472b6", "#38bdf8", "#fbbf24", "#4ade80", "#fb7185",
   "#a78bfa", "#f97316", "#2dd4bf", "#c4b5fd", "#facc15"];
 
-app.use(express.static("public"));
+app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"));
+app.get("/style.css", (req, res) => res.sendFile(__dirname + "/style.css"));
+app.get("/game.js", (req, res) => res.sendFile(__dirname + "/game.js"));
 app.get("/health", (_req, res) => res.json({ ok: true, rooms: rooms.size }));
 
 function makeCode() {
