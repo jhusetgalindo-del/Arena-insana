@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Arena Insana - Batalla Épica</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <!-- Menú Principal Estilizado -->
+  <div id="menu-screen">
+    <div class="menu-card">
+      <div class="brand">
+        <h1>ARENA <span>INSANA</span></h1>
+        <p>Multijugador en Línea • Hasta 10 Jugadores</p>
+      </div>
+
+      <div class="field">
+        <label>NOMBRE DE COMBATIENTE</label>
+        <input type="text" id="player-name" placeholder="Tu apodo..." maxlength="12" value="Guerrero">
+      </div>
+
+      <label class="subtitle">ELIGE TU ROL Y CLASE</label>
+      <div class="roles-container">
+        <div class="role-box" data-role="dps">
+          <div class="icon">⚡</div>
+          <h3>CAZADOR</h3>
+          <span>DPS ÁGIL</span>
+          <p>Disparos de plasma rápidos y alta velocidad de movimiento.</p>
+        </div>
+        <div class="role-box active" data-role="tanque">
+          <div class="icon">🛡️</div>
+          <h3>GUARDIÁN</h3>
+          <span>TANQUE PESADO</span>
+          <p>Robusta armadura defensiva y proyectiles de roca masivos.</p>
+        </div>
+        <div class="role-box" data-role="soporte">
+          <div class="icon">✨</div>
+          <h3>ORÁCULO</h3>
+          <span>SOPORTE MÍSTICO</span>
+          <p>Orbes de energía estelar con gran daño y balance de combate.</p>
+        </div>
+      </div>
+
+      <div class="lobby-info">
+        Conectados en sala: <strong id="online-count">0</strong> / 10 jugadores
+      </div>
+
+      <button id="btn-enter">¡ENTRAR A LA ARENA!</button>
+    </div>
+  </div>
+
+  <!-- HUD In-Game -->
+  <div id="hud-screen" class="hidden">
+    <div class="hud-topbar">
+      <div class="time-badge">🕒 <span id="match-timer">05:00</span></div>
+      <div class="leaderboard-panel">
+        <h4>TOP 5 JUGADORES</h4>
+        <ul id="leaderboard-list"></ul>
+      </div>
+    </div>
+
+    <!-- Controles Táctiles Móvil -->
+    <div class="mobile-hud">
+      <div id="virtual-joystick"><div id="joystick-handle"></div></div>
+      <div class="action-panel">
+        <button id="touch-attack">🔥</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <script src="maps.js"></script>
+  <script src="characters.js"></script>
+  <script src="combat.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
