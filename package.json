@@ -1,0 +1,13 @@
+{
+  "name": "arena-insana",
+  "version": "5.1.0",
+  "description": "Arena Insana - Juego Multijugador Definitivo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1"
+  }
+}

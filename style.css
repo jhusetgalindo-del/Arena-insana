@@ -1,0 +1,70 @@
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: 'Segoe UI', Tahoma, sans-serif; }
+body, html { width: 100%; height: 100%; overflow: hidden; background: #04060b; color: #fff; }
+
+#menu-screen {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at center, #101833 0%, #030509 100%);
+  display: flex; justify-content: center; align-items: center; z-index: 100;
+}
+
+.menu-card {
+  background: rgba(12, 17, 32, 0.95);
+  border: 2px solid #00f0ff;
+  box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+  border-radius: 20px;
+  padding: 40px;
+  width: 90%;
+  max-width: 760px;
+  text-align: center;
+}
+
+.menu-card h1 { font-size: 3rem; letter-spacing: 3px; color: #fff; text-shadow: 0 0 20px #00f0ff; }
+.menu-card h1 span { color: #00f0ff; }
+.menu-card p { color: #8fa3c7; font-size: 0.9rem; margin-top: 6px; margin-bottom: 25px; }
+
+.field { margin-bottom: 22px; }
+.field label { display: block; font-size: 0.75rem; color: #00f0ff; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px; }
+#player-name {
+  width: 65%; padding: 12px; background: #060912; border: 1px solid #1f305e;
+  border-radius: 8px; color: #fff; font-size: 1.15rem; text-align: center; outline: none;
+}
+#player-name:focus { border-color: #00f0ff; box-shadow: 0 0 10px rgba(0,240,255,0.4); }
+
+.subtitle { display: block; font-size: 0.75rem; color: #ffaa00; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; }
+
+.roles-container { display: flex; gap: 16px; margin-bottom: 25px; }
+.role-box {
+  flex: 1; background: #090e1c; border: 2px solid #1a274c; border-radius: 12px; padding: 18px 12px; cursor: pointer; transition: 0.25s;
+}
+.role-box:hover, .role-box.active {
+  border-color: #00f0ff; background: #132247; transform: translateY(-5px); box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+}
+.role-box .icon { font-size: 2.2rem; margin-bottom: 8px; }
+.role-box h3 { font-size: 1.05rem; color: #fff; }
+.role-box span { font-size: 0.65rem; color: #ffaa00; font-weight: bold; display: block; margin: 5px 0; }
+.role-box p { font-size: 0.72rem; color: #8595b2; line-height: 1.35; }
+
+.lobby-info { font-size: 0.95rem; color: #00ffaa; margin-bottom: 20px; font-weight: bold; }
+
+#btn-enter {
+  width: 100%; padding: 16px; background: linear-gradient(90deg, #00f0ff, #0055ff);
+  border: none; border-radius: 10px; color: #fff; font-size: 1.3rem; font-weight: bold; cursor: pointer; letter-spacing: 2px; box-shadow: 0 0 25px rgba(0, 85, 255, 0.6);
+  transition: 0.2s;
+}
+#btn-enter:hover { transform: scale(1.02); filter: brightness(1.15); }
+
+#gameCanvas { display: block; width: 100vw; height: 100vh; }
+.hidden { display: none !important; }
+
+.hud-topbar {
+  position: absolute; top: 15px; left: 20px; right: 20px; display: flex; justify-content: space-between; pointer-events: none; z-index: 50;
+}
+.time-badge {
+  background: rgba(8, 12, 24, 0.9); border: 1px solid #00f0ff; border-radius: 8px; padding: 10px 18px; font-size: 1.2rem; font-weight: bold; color: #00ffaa; box-shadow: 0 0 15px rgba(0,240,255,0.2);
+}
+.leaderboard-panel {
+  background: rgba(8, 12, 24, 0.9); border: 1px solid rgba(0, 240, 255, 0.4); border-radius: 8px; padding: 12px 18px; min-width: 220px; box-shadow: 0 0 15px rgba(0,240,255,0.2);
+}
+.leaderboard-panel h4 { font-size: 0.75rem; color: #00f0ff; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 5px; margin-bottom: 6px; letter-spacing: 1px; }
+#leaderboard-list { list-style: none; }
+#leaderboard-list li { font-size: 0.8rem; display: flex; justify-content: space-between; margin-top: 4px; color: #cbd5e1; }

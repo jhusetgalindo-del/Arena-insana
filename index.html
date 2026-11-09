@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Arena Insana - Multijugador Profesional</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div id="menu-screen">
+    <div class="menu-card">
+      <h1>ARENA <span>INSANA</span></h1>
+      <p>Héroes Poligonales • Combate Multijugador en Línea</p>
+
+      <div class="field">
+        <label>APODO DE COMBATIENTE</label>
+        <input type="text" id="player-name" placeholder="Tu nombre..." maxlength="12" value="Guerrero">
+      </div>
+
+      <label class="subtitle">SELECCIONA TU CLASE DE COMBATE</label>
+      <div class="roles-container">
+        <div class="role-box" data-role="dps">
+          <div class="icon">⚡</div>
+          <h3>CAZADOR</h3>
+          <span>DPS ÁGIL</span>
+          <p>Disparos de plasma gemelos a alta cadencia y velocidad explosiva.</p>
+        </div>
+        <div class="role-box active" data-role="tanque">
+          <div class="icon">🛡️</div>
+          <h3>TITÁN</h3>
+          <span>TANQUE PESADO</span>
+          <p>Blindaje impenetrable y misiles de impacto masivo.</p>
+        </div>
+        <div class="role-box" data-role="soporte">
+          <div class="icon">✨</div>
+          <h3>ORÁCULO</h3>
+          <span>SOPORTE MÍSTICO</span>
+          <p>Orbes estelares de energía guiada y control táctico superior.</p>
+        </div>
+      </div>
+
+      <div class="lobby-info">Conectados en sala: <strong id="online-count">0</strong> / 10</div>
+      <button id="btn-enter">¡ENTRAR A LA ARENA!</button>
+    </div>
+  </div>
+
+  <div id="hud-screen" class="hidden">
+    <div class="hud-topbar">
+      <div class="time-badge">🕒 <span id="match-timer">05:00</span></div>
+      <div class="leaderboard-panel">
+        <h4>TABLA DE LÍDERES</h4>
+        <ul id="leaderboard-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+  <script src="game.js"></script>
+</body>
+</html>
