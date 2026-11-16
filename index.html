@@ -1,0 +1,28 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>ARENA INSANA</title><link rel="stylesheet" href="style.css"></head><body>
+<div id="game"></div>
+<div id="hud" class="hidden">
+ <div id="top"><div id="tm">0:00</div><div id="mode"></div><div id="score"></div></div>
+ <div id="feed"></div><div id="hurt"></div><div id="msg"></div>
+ <div id="bl"><div class="bar hp"><i id="hpb"></i><span id="hpt"></span></div><div class="bar sh"><i id="shb"></i></div><div id="buffs"></div></div>
+ <div id="skills"></div>
+ <div id="touch"><div id="joy"><i></i></div><div id="tbtn"></div></div>
+ <button id="quit" class="btn sm">✕</button>
+</div>
+<div id="toasts"></div>
+<section id="s-menu" class="screen on"><h1>ARENA<br>INSANA</h1><div class="sub">Combate pixel art · hasta 10 jugadores</div>
+ <input id="name" maxlength="14" placeholder="Tu nombre"><div class="col"><button class="btn big" id="b-play">▶ JUGAR</button><button class="btn" id="b-prof">PERFIL</button><button class="btn" id="b-set">AJUSTES</button></div><div id="mchars"></div></section>
+<section id="s-lobby" class="screen"><h2>JUGAR</h2><div class="col"><button class="btn big" id="b-create">CREAR SALA</button><div class="or">— o —</div><input id="code" maxlength="5" placeholder="CÓDIGO"><button class="btn" id="b-join">UNIRSE</button><button class="btn sm" data-go="s-menu">← Volver</button></div></section>
+<section id="s-room" class="screen"><div class="rh"><div>SALA <b id="rcode"></b> <button class="btn sm" id="b-copy">Copiar</button></div><button class="btn sm" id="b-leave">Salir</button></div>
+ <div class="rg"><div class="panel"><h3>JUGADORES <span id="pcount"></span></h3><div id="plist"></div><p id="wait"></p></div>
+ <div class="panel"><h3>PERSONAJE</h3><div id="roles"></div><div id="cgrid"></div></div>
+ <div class="panel"><h3>PERSONALIZACIÓN</h3><div id="cinfo"></div><label>Estilo básico<select id="v-s"></select></label><label>Elemento<select id="v-e"></select></label><label>Postura<select id="v-m"></select></label><label>Apariencia<select id="v-skin"></select></label><label>Efecto<select id="v-fx"></select></label>
+ <h3>PARTIDA <small id="hostnote"></small></h3><label>Mapa<select id="r-map"></select></label><label>Modo<select id="r-mode"></select></label><small id="mdesc"></small><button class="btn big" id="b-start">▶ COMENZAR</button></div></div></section>
+<section id="s-result" class="screen"><h2 id="rtitle"></h2><div id="rinfo"></div><div id="rtable"></div><button class="btn big" id="b-back">VOLVER A LA SALA</button></section>
+<section id="s-prof" class="screen"><h2>PERFIL</h2><div id="pbody" class="panel"></div><button class="btn sm" data-go="s-menu">← Volver</button></section>
+<section id="s-set" class="screen"><h2>AJUSTES</h2><div class="panel" id="sbody"></div><button class="btn sm" data-go="s-menu">← Volver</button></section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="characters.js"></script><script src="creatures.js"></script><script src="modes.js"></script><script src="maps.js"></script>
+<script src="sprites.js"></script><script src="audio.js"></script><script src="maparte.js"></script><script src="ui.js"></script><script src="game.js"></script>
+</body></html>
